@@ -1,23 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>CERT-In Vulnerability Viewer</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>PDF → JSON Converter</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>
-  <h1>CERT-In Vulnerability Notes</h1>
-  <p>Upload JSON files to view & download</p>
-</header>
+<h1>PDF to JSON (CERT-In)</h1>
 
-<section class="upload-box">
-  <input type="file" id="fileInput" multiple accept=".json" />
-</section>
+<input type="file" id="pdfInput" multiple accept="application/pdf">
 
-<section id="documents"></section>
+<div id="output"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
