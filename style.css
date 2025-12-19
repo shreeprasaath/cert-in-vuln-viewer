@@ -1,0 +1,56 @@
+body {
+  font-family: system-ui, sans-serif;
+  background: #f7f9fb;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background: #0f172a;
+  color: white;
+  padding: 20px;
+}
+
+.upload-box {
+  padding: 20px;
+  background: white;
+  border-bottom: 1px solid #ddd;
+}
+
+#documents {
+  padding: 20px;
+}
+
+.document {
+  background: white;
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 6px;
+}
+
+.document h2 {
+  margin-top: 0;
+}
+
+.section {
+  margin-bottom: 12px;
+}
+
+.section h4 {
+  margin-bottom: 4px;
+  color: #1e293b;
+}
+
+.download-btn {
+  margin-top: 15px;
+  padding: 8px 14px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.download-btn:hover {
+  background: #1d4ed8;
+}
