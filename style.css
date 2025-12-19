@@ -1,20 +1,36 @@
 body {
-  font-family: system-ui;
-  padding: 20px;
+  font-family: system-ui, sans-serif;
   background: #f8fafc;
+  padding: 20px;
 }
 
-.document {
-  background: white;
-  padding: 15px;
+h1 {
+  color: #0f172a;
+}
+
+.card {
+  background: #ffffff;
+  padding: 16px;
   margin-top: 20px;
   border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+}
+
+.section {
+  margin-top: 10px;
+}
+
+.section h4 {
+  margin-bottom: 4px;
+  color: #1e293b;
 }
 
 button {
-  padding: 6px 12px;
+  margin-top: 12px;
+  padding: 8px 14px;
   background: #2563eb;
   color: white;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
 }
