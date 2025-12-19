@@ -1,68 +1,77 @@
-const fileInput = document.getElementById("fileInput");
-const documentsDiv = document.getElementById("documents");
+const pdfInput = document.getElementById("pdfInput");
+const output = document.getElementById("output");
 
-fileInput.addEventListener("change", () => {
-  documentsDiv.innerHTML = "";
-  Array.from(fileInput.files).forEach(handleFile);
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.js";
+
+pdfInput.addEventListener("change", () => {
+  Array.from(pdfInput.files).forEach(parsePDF);
 });
 
-function handleFile(file) {
+async function parsePDF(file) {
   const reader = new FileReader();
-  reader.onload = () => {
-    const json = JSON.parse(reader.result);
-    renderDocument(json, file.name);
+  reader.onload = async () => {
+    const pdf = await pdfjsLib.getDocument(new Uint8Array(reader.result)).promise;
+    let content = [];
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const text = await page.getTextContent();
+
+      text.items.forEach(item => {
+        content.push({
+          text: item.str.trim(),
+          size: item.transform[0]
+        });
+      });
+    }
+
+    const json = extractSections(content);
+    render(json, file.name);
   };
-  reader.readAsText(file);
+  reader.readAsArrayBuffer(file);
 }
 
-function renderDocument(data, filename) {
-  const doc = document.createElement("div");
-  doc.className = "document";
+function extractSections(items) {
+  const result = {};
+  let currentHeader = "General";
 
-  const title = document.createElement("h2");
-  title.textContent = data.Title || filename;
-  doc.appendChild(title);
-
-  Object.entries(data).forEach(([key, value]) => {
-    if (key === "Title") return;
-
-    const section = document.createElement("div");
-    section.className = "section";
-
-    const h4 = document.createElement("h4");
-    h4.textContent = key.replace(/_/g, " ");
-    section.appendChild(h4);
-
-    const p = document.createElement("p");
-    p.textContent = Array.isArray(value)
-      ? value.join(", ")
-      : typeof value === "object"
-      ? JSON.stringify(value, null, 2)
-      : value;
-
-    section.appendChild(p);
-    doc.appendChild(section);
+  items.forEach(i => {
+    if (i.size > 14 && i.text.length < 80) {
+      currentHeader = i.text;
+      result[currentHeader] = "";
+    } else if (i.text) {
+      result[currentHeader] += i.text + " ";
+    }
   });
 
-  const downloadBtn = document.createElement("button");
-  downloadBtn.className = "download-btn";
-  downloadBtn.textContent = "Download JSON";
-  downloadBtn.onclick = () => downloadJSON(data, filename);
-
-  doc.appendChild(downloadBtn);
-  documentsDiv.appendChild(doc);
+  return result;
 }
 
-function downloadJSON(data, filename) {
+function render(json, filename) {
+  const div = document.createElement("div");
+  div.className = "document";
+
+  div.innerHTML = `<h2>${filename}</h2>`;
+
+  Object.entries(json).forEach(([k, v]) => {
+    div.innerHTML += `<h4>${k}</h4><p>${v}</p>`;
+  });
+
+  const btn = document.createElement("button");
+  btn.textContent = "Download JSON";
+  btn.onclick = () => download(json, filename.replace(".pdf", ".json"));
+
+  div.appendChild(btn);
+  output.appendChild(div);
+}
+
+function download(data, filename) {
   const blob = new Blob([JSON.stringify(data, null, 2)], {
     type: "application/json"
   });
-  const url = URL.createObjectURL(blob);
-
   const a = document.createElement("a");
-  a.href = url;
+  a.href = URL.createObjectURL(blob);
   a.download = filename;
   a.click();
-
-  URL.revokeObjectURL(url);
 }
